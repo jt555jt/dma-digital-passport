@@ -1,0 +1,1004 @@
+
+<!DOCTYPE html>
+<html lang="en">
+head>
+<meta charset="UTF-8">
+<title>DMA Digital Passport – Maya Prototype</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root {
+    --pink: #f98ab8;
+    --pink-deep: #e46a9f;
+    --peach: #ffd3b6;
+    --lavender: #d8c8ff;
+    --mint: #c9f7df;
+    --ink: #283045;
+    --bg1: #ffe7f1;
+    --bg2: #d6eaff;
+    --radius-lg: 26px;
+    --radius-md: 18px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at 10% 0%, rgba(249,138,184,0.35), transparent 50%),
+      radial-gradient(circle at 100% 10%, rgba(216,200,255,0.4), transparent 55%),
+      linear-gradient(135deg, var(--bg1), var(--bg2));
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    color: var(--ink);
+  }
+
+  .app {
+    max-width: 1080px;
+    width: 100%;
+    margin: 20px;
+    background: rgba(255,255,255,0.92);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 55px rgba(18,24,38,0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(12px);
+  }
+
+  header {
+    padding: 18px 24px 10px 24px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(249,138,184,0.3), transparent 55%),
+      radial-gradient(circle at 100% 0%, rgba(201,247,223,0.35), transparent 55%),
+      linear-gradient(120deg, rgba(255,255,255,0.98), rgba(255,255,255,0.9));
+    border-bottom: 1px solid rgba(255,255,255,0.7);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    background:
+      conic-gradient(from 200deg,
+      #f98ab8,
+      #ffd3b6,
+      #d8c8ff,
+      #c9f7df,
+      #f98ab8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 17px;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.8);
+  }
+
+  .brand-text h1 {
+    font-size: 19px;
+    margin: 0;
+  }
+
+  .brand-text p {
+    margin: 3px 0 0 0;
+    font-size: 12px;
+    color: #555b73;
+  }
+
+  nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .nav-btn {
+    border: none;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.85);
+    color: #4a546d;
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 3px 8px rgba(18,24,38,0.12);
+    transition: all 0.15s ease-out;
+  }
+
+  .nav-btn span {
+    font-size: 13px;
+  }
+
+  .nav-btn.active {
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    color: #161827;
+    font-weight: 600;
+    box-shadow: 0 8px 18px rgba(228,106,159,0.45);
+  }
+
+  .nav-btn:hover:not(.active) {
+    transform: translateY(-1px);
+    background: white;
+  }
+
+  main {
+    padding: 10px 24px 24px 24px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .section {
+    display: none;
+    animation: fadeIn 0.26s ease-out;
+  }
+
+  .section.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scroll-area {
+    max-height: none;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.98);
+    border-radius: var(--radius-md);
+    padding: 18px 18px 20px 18px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 22px rgba(18,24,38,0.08);
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(249,138,184,0.18), transparent 55%),
+      radial-gradient(circle at 100% 0%, rgba(201,247,223,0.18), transparent 55%),
+      radial-gradient(circle at 100% 100%, rgba(216,200,255,0.19), transparent 45%);
+    opacity: 0.75;
+    pointer-events: none;
+  }
+
+  .card-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  h2, h3 {
+    margin-top: 0;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    background: rgba(255,255,255,0.85);
+    color: #4a546d;
+    border: 1px solid rgba(255,255,255,0.9);
+    margin-bottom: 8px;
+  }
+
+  .pill.pink {
+    background: rgba(249,138,184,0.12);
+    color: #9d2f61;
+  }
+
+  .pill.blue {
+    background: rgba(216,200,255,0.16);
+    color: #3f3f80;
+  }
+
+  .pill.mint {
+    background: rgba(201,247,223,0.2);
+    color: #23644a;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .tag {
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    background: rgba(255,255,255,0.8);
+    border: 1px dashed rgba(40,48,69,0.15);
+  }
+
+  .primary {
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, var(--pink), var(--lavender));
+    color: #171828;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 10px 24px rgba(18,24,38,0.22);
+    margin-top: 10px;
+    transition: all 0.18s ease-out;
+  }
+
+  .primary:hover {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 14px 30px rgba(18,24,38,0.25);
+  }
+
+  .primary span {
+    font-size: 16px;
+  }
+
+  .gallery-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  .gallery-tile {
+    padding: 13px 12px 14px 12px;
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(249,138,184,0.18), transparent 55%),
+      radial-gradient(circle at 100% 100%, rgba(216,200,255,0.2), transparent 55%),
+      rgba(255,255,255,0.98);
+    border: 1px solid rgba(255,255,255,0.9);
+    box-shadow: 0 6px 16px rgba(18,24,38,0.06);
+    cursor: pointer;
+    transition: all 0.18s ease-out;
+  }
+
+  .gallery-tile h4 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+  }
+
+  .gallery-tile p {
+    margin: 0;
+    font-size: 12px;
+    color: #525870;
+  }
+
+  .gallery-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(18,24,38,0.11);
+  }
+
+  .gallery-tile.active {
+    border-color: var(--pink);
+    box-shadow: 0 12px 30px rgba(228,106,159,0.4);
+  }
+
+  .status {
+    font-size: 12px;
+    margin-top: 10px;
+    color: #505572;
+  }
+
+  .prompt-box {
+    margin-top: 10px;
+    padding: 12px 12px 14px 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid rgba(255,255,255,0.9);
+  }
+
+  .prompt-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9196b2;
+    margin-bottom: 4px;
+  }
+
+  .prompt-text {
+    font-size: 14px;
+  }
+
+  .prompt-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .ghost-btn {
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(40,48,69,0.12);
+    background: rgba(255,255,255,0.9);
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #3f4660;
+    transition: all 0.15s ease-out;
+  }
+
+  .ghost-btn:hover {
+    background: #fff4fa;
+    transform: translateY(-1px);
+  }
+
+  .passport-stamps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .stamp {
+    padding: 8px 10px;
+    border-radius: 12px;
+    background:
+      linear-gradient(135deg, rgba(249,138,184,0.2), rgba(216,200,255,0.2));
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(18,24,38,0.15);
+  }
+
+  .stamp span {
+    font-size: 16px;
+  }
+
+  .summary {
+    font-size: 13px;
+    margin-top: 6px;
+    color: #474f6a;
+  }
+
+  .reflection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .reflection-item {
+    border-radius: 16px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(255,255,255,0.9);
+    box-shadow: 0 4px 12px rgba(18,24,38,0.06);
+  }
+
+  .reflection-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 11px;
+    color: #8086a1;
+    margin-bottom: 4px;
+  }
+
+  .reflection-prompt {
+    font-size: 12px;
+    color: #515777;
+    margin-bottom: 3px;
+  }
+
+  .reflection-text {
+    font-size: 13px;
+  }
+
+  .empty-text {
+    font-size: 13px;
+    color: #8086a1;
+    margin-top: 6px;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 0% 0%, rgba(249,138,184,0.34), transparent 60%),
+                radial-gradient(circle at 100% 100%, rgba(216,200,255,0.32), transparent 60%),
+                rgba(10,12,20,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+  }
+
+  .modal {
+    max-width: 520px;
+    width: 92%;
+    background: rgba(255,255,255,0.98);
+    border-radius: 22px;
+    padding: 16px 16px 14px 16px;
+    box-shadow: 0 20px 55px rgba(0,0,0,0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .modal::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(249,138,184,0.3), transparent 55%),
+      radial-gradient(circle at 100% 100%, rgba(216,200,255,0.3), transparent 55%);
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
+  .modal-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .modal-header h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .close-btn {
+    border: none;
+    background: rgba(255,255,255,0.85);
+    border-radius: 999px;
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(18,24,38,0.18);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 110px;
+    border-radius: 14px;
+    border: 1px solid rgba(40,48,69,0.16);
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+    margin-top: 6px;
+    background: rgba(255,255,255,0.96);
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    gap: 8px;
+  }
+
+  .small {
+    font-size: 11px;
+    color: #747b98;
+  }
+
+  @media (max-width: 720px) {
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    nav {
+      width: 100%;
+      justify-content: flex-start;
+    }
+    main {
+      padding-inline: 16px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="brand-logo">DP</div>
+      <div class="brand-text">
+        <h1>DMA Digital Passport</h1>
+        <p>A soft, reflective prototype imagined for Maya</p>
+      </div>
+    </div>
+    <nav>
+      <button class="nav-btn active" data-section="home" onclick="showSection('home')">
+        <span>🏠</span> Home
+      </button>
+      <button class="nav-btn" data-section="map" onclick="showSection('map')">
+        <span>🗺️</span> Gallery Map
+      </button>
+      <button class="nav-btn" data-section="prompts" onclick="showSection('prompts')">
+        <span>✨</span> Prompts
+      </button>
+      <button class="nav-btn" data-section="journal" onclick="showSection('journal')">
+        <span>📝</span> Journal
+      </button>
+      <button class="nav-btn" data-section="passport" onclick="showSection('passport')">
+        <span>📖</span> Passport
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Home: dreamy scrollable overview -->
+    <section id="home" class="section active scroll-area">
+      <div class="card">
+        <div class="card-inner">
+          <div class="pill pink">For a visitor like Maya</div>
+          <h2>Turn a museum visit into a quiet, creative ritual</h2>
+          <p>
+            The Digital Passport is imagined for a young creative professional who wants art, reflection, 
+            and a little bit of play in the same visit. Instead of quizzes or right answers, it offers gentle 
+            prompts that invite you to notice color, detail, mood, and possibility.
+          </p>
+          <div class="tag-row">
+            <div class="tag">Slow looking</div>
+            <div class="tag">Soft color</div>
+            <div class="tag">Personal meaning</div>
+            <div class="tag">Digital keepsake</div>
+          </div>
+          <button class="primary" onclick="startAdventure()">
+            Start in the Gallery Map <span>➜</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <div class="pill blue">How it works</div>
+          <p>
+            You choose a gallery on the map, receive a randomly selected open-ended prompt, 
+            and, if you want, capture your response in a short journal note. Each reflection quietly 
+            unlocks a stamp, building a visual memory of how you moved through the museum that day.
+          </p>
+          <p class="small">
+            This prototype shows how an experience like this could feel on a phone or tablet, 
+            while still honoring the calm and intimacy of being with the art itself.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery map -->
+    <section id="map" class="section">
+      <div class="card">
+        <div class="card-inner">
+          <div class="pill mint">Choose your first space</div>
+          <h2>Gallery Map</h2>
+          <p>
+            Each gallery focuses on a different way of seeing. Tap one to set your route, then open the Prompts tab to receive a gentle question.
+          </p>
+
+          <div class="gallery-map">
+            <div class="gallery-tile" data-gallery="colorLab" onclick="selectGallery('colorLab')">
+              <h4>Color Lab</h4>
+              <p>Palettes, gradients, and colors that feel like moods.</p>
+            </div>
+            <div class="gallery-tile" data-gallery="details" onclick="selectGallery('details')">
+              <h4>Hidden Details</h4>
+              <p>Textures, tiny choices, and almost-invisible elements.</p>
+            </div>
+            <div class="gallery-tile" data-gallery="stories" onclick="selectGallery('stories')">
+              <h4>Story Gallery</h4>
+              <p>Characters, gestures, and frozen scenes.</p>
+            </div>
+            <div class="gallery-tile" data-gallery="future" onclick="selectGallery('future')">
+              <h4>Future Forms</h4>
+              <p>Experiments, installations, and digital echoes.</p>
+            </div>
+          </div>
+
+          <div class="status" id="mapStatus">
+            No gallery chosen yet. Tap a tile to choose where you begin.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Prompts -->
+    <section id="prompts" class="section">
+      <div class="card">
+        <div class="card-inner">
+          <div id="promptPill" class="pill pink">No gallery selected</div>
+          <h2 id="promptTitle">Choose a gallery to receive a prompt</h2>
+          <p id="promptIntro">
+            Use the Gallery Map to pick a starting point. Prompts here are open-ended, with no right or wrong answers. 
+            They are meant to feel like small invitations rather than tasks.
+          </p>
+
+          <div class="prompt-box">
+            <div class="prompt-label">Prompt</div>
+            <div class="prompt-text" id="promptText">
+              When you select a gallery, this space will show a reflective question you can carry with you as you look.
+            </div>
+          </div>
+
+          <div class="prompt-actions">
+            <button class="ghost-btn" onclick="newPrompt()">
+              🎲 New random prompt
+            </button>
+            <button class="ghost-btn" onclick="openJournalForCurrentPrompt()">
+              📝 Save a reflection
+            </button>
+          </div>
+
+          <div class="status small" id="promptStatus">
+            Tip: You can save multiple reflections from different galleries and see them later in the Journal and Passport tabs.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Journal -->
+    <section id="journal" class="section">
+      <div class="card">
+        <div class="card-inner">
+          <div class="pill blue">Your quiet notes</div>
+          <h2>Reflection Journal</h2>
+          <p>
+            These are short fragments of what you noticed, felt, or imagined in response to the prompts. 
+            In a live version, these could stay private or sync to a personal account.
+          </p>
+
+          <div id="journalList" class="reflection-list">
+            <!-- Reflections will appear here -->
+          </div>
+
+          <div id="journalEmpty" class="empty-text">
+            You have not saved any reflections yet. When a prompt resonates with you, tap “Save a reflection” and write a few lines.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Passport -->
+    <section id="passport" class="section">
+      <div class="card">
+        <div class="card-inner">
+          <div class="pill mint">A soft record of your visit</div>
+          <h2>Your Passport Stamps</h2>
+          <p>
+            Each gallery where you leave a reflection adds a small stamp to your passport. 
+            It is less about finishing everything and more about noticing what drew you in.
+          </p>
+
+          <div id="stampsContainer" class="passport-stamps"></div>
+
+          <p id="passportSummary" class="summary">
+            No stamps yet. Once you save reflections from different spaces, your passport will start to fill with color.
+          </p>
+
+          <p class="small">
+            In a real implementation, visitors could revisit this summary after the visit, or receive a gentle email with their prompts and notes.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Journal Modal -->
+<div class="modal-backdrop" id="journalModal">
+  <div class="modal">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <h3>Add a reflection</h3>
+        <button class="close-btn" onclick="closeJournalModal()">✕</button>
+      </div>
+      <div class="small" id="journalPromptLabel"></div>
+      <textarea id="journalText" placeholder="Write a few lines about what you noticed, felt, or imagined."></textarea>
+      <div class="modal-footer">
+        <button class="ghost-btn" onclick="closeJournalModal()">Cancel</button>
+        <button class="primary" onclick="saveReflection()">
+          Save reflection <span>✓</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const galleries = {
+    colorLab: {
+      name: "Color Lab",
+      tag: "Color Lab · color and mood",
+      prompts: [
+        "Find a color in the room that matches your mood today. Why does it feel connected to you.",
+        "Choose an artwork and imagine how the colors would keep shifting if the piece continued beyond the frame. Where do they travel.",
+        "Pick two colors from different works. If they were people talking, what would their conversation sound like.",
+        "Look at a bold color and imagine what sound it would make if you could hear it. Is it soft, sharp, loud, or warm.",
+        "Choose one color you see and imagine it as a character. What is their energy, their style, their pace."
+      ]
+    },
+    details: {
+      name: "Hidden Details",
+      tag: "Hidden Details · tiny choices",
+      prompts: [
+        "Find a detail smaller than a dime. Why do you think the artist placed it there and not somewhere else.",
+        "Look at a texture that makes you curious. If you could touch it, what would it feel like and what does it remind you of.",
+        "Notice something you almost missed. Once you see it, what changes about the whole work.",
+        "Choose a pattern. Imagine where it lives after it leaves the artwork. Does it repeat, scatter, or fade.",
+        "Spend thirty seconds with one tiny part of a work. What new thoughts appear when you give it that time."
+      ]
+    },
+    stories: {
+      name: "Story Gallery",
+      tag: "Story Gallery · people and scenes",
+      prompts: [
+        "Find a scene with figures. Imagine what happened one moment before and one moment after what you see.",
+        "Choose a person or figure in an artwork. What do you think they are thinking but not saying out loud.",
+        "Imagine a short soundtrack or song that fits one work here. What is the mood and tempo.",
+        "Pick a character in one artwork and imagine moving them into another work nearby. How does the story change.",
+        "Find the quietest part of an artwork. Why does it feel still to you."
+      ]
+    },
+    future: {
+      name: "Future Forms",
+      tag: "Future Forms · experiments",
+      prompts: [
+        "Choose an artwork and imagine it as a portal into another world. What is the first thing you see when you step through.",
+        "If this artwork existed two hundred years in the future, how would someone describe it and what story would they tell about it.",
+        "Look at a piece and imagine the sound it would make if it were alive for one second.",
+        "Imagine this work in motion for a brief moment. How would it move, stretch, glitch, or breathe.",
+        "If this piece inspired a digital space or app, what would it help people feel or do."
+      ]
+    }
+  };
+
+  const galleryStamps = {
+    colorLab: { icon: "🎨", text: "Color Dreamer" },
+    details: { icon: "🔍", text: "Detail Seeker" },
+    stories: { icon: "📖", text: "Story Weaver" },
+    future: { icon: "🚀", text: "Future Gazer" }
+  };
+
+  let currentSection = "home";
+  let currentGalleryKey = null;
+  let currentPromptText = "";
+  let reflections = [];
+  let reflectionIdCounter = 1;
+
+  function showSection(id) {
+    currentSection = id;
+    document.querySelectorAll(".section").forEach(sec => {
+      sec.classList.remove("active");
+    });
+    const section = document.getElementById(id);
+    if (section) {
+      section.classList.add("active");
+    }
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      if (btn.dataset.section === id) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+  }
+
+  function startAdventure() {
+    showSection("map");
+  }
+
+  function selectGallery(key) {
+    currentGalleryKey = key;
+    const gallery = galleries[key];
+
+    document.querySelectorAll(".gallery-tile").forEach(tile => {
+      if (tile.dataset.gallery === key) {
+        tile.classList.add("active");
+      } else {
+        tile.classList.remove("active");
+      }
+    });
+
+    const mapStatus = document.getElementById("mapStatus");
+    mapStatus.textContent = "You selected " + gallery.name + ". Open the Prompts tab to receive a question.";
+
+    const pill = document.getElementById("promptPill");
+    pill.textContent = gallery.tag;
+
+    const title = document.getElementById("promptTitle");
+    title.textContent = gallery.name + " prompt";
+
+    const intro = document.getElementById("promptIntro");
+    intro.textContent = "Here is an open-ended question you can carry with you while you explore " + gallery.name + ". There is no right or wrong answer.";
+
+    chooseRandomPrompt();
+    showSection("prompts");
+  }
+
+  function chooseRandomPrompt() {
+    if (!currentGalleryKey) {
+      const promptText = document.getElementById("promptText");
+      promptText.textContent = "Choose a gallery first. Prompts will appear here once you select a space on the map.";
+      currentPromptText = "";
+      return;
+    }
+    const gallery = galleries[currentGalleryKey];
+    const list = gallery.prompts;
+    const index = Math.floor(Math.random() * list.length);
+    currentPromptText = list[index];
+
+    const promptText = document.getElementById("promptText");
+    promptText.textContent = currentPromptText;
+
+    const status = document.getElementById("promptStatus");
+    status.textContent = "You can stay with this prompt as long as you like, or roll a new one.";
+  }
+
+  function newPrompt() {
+    chooseRandomPrompt();
+  }
+
+  function openJournalForCurrentPrompt() {
+    if (!currentGalleryKey || !currentPromptText) {
+      const status = document.getElementById("promptStatus");
+      status.textContent = "Choose a gallery and prompt first, then you can save a reflection.";
+      return;
+    }
+    const label = document.getElementById("journalPromptLabel");
+    const gallery = galleries[currentGalleryKey];
+    label.textContent = gallery.name + " · " + currentPromptText;
+    const textarea = document.getElementById("journalText");
+    textarea.value = "";
+    document.getElementById("journalModal").style.display = "flex";
+  }
+
+  function closeJournalModal() {
+    document.getElementById("journalModal").style.display = "none";
+  }
+
+  function saveReflection() {
+    const textarea = document.getElementById("journalText");
+    const text = textarea.value.trim();
+    if (!text) {
+      closeJournalModal();
+      return;
+    }
+    const gallery = galleries[currentGalleryKey];
+    const reflection = {
+      id: reflectionIdCounter++,
+      galleryKey: currentGalleryKey,
+      galleryName: gallery.name,
+      prompt: currentPromptText,
+      text: text,
+      timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+    };
+    reflections.push(reflection);
+    closeJournalModal();
+    updateJournalView();
+    updatePassport();
+    showSection("journal");
+  }
+
+  function updateJournalView() {
+    const list = document.getElementById("journalList");
+    const empty = document.getElementById("journalEmpty");
+
+    list.innerHTML = "";
+
+    if (reflections.length === 0) {
+      empty.style.display = "block";
+      return;
+    } else {
+      empty.style.display = "none";
+    }
+
+    reflections.slice().reverse().forEach(ref => {
+      const div = document.createElement("div");
+      div.className = "reflection-item";
+
+      const meta = document.createElement("div");
+      meta.className = "reflection-meta";
+      meta.innerHTML = `<span>${ref.galleryName}</span><span>${ref.timestamp}</span>`;
+      div.appendChild(meta);
+
+      const prompt = document.createElement("div");
+      prompt.className = "reflection-prompt";
+      prompt.textContent = ref.prompt;
+      div.appendChild(prompt);
+
+      const text = document.createElement("div");
+      text.className = "reflection-text";
+      text.textContent = ref.text;
+      div.appendChild(text);
+
+      list.appendChild(div);
+    });
+  }
+
+  function updatePassport() {
+    const stampsContainer = document.getElementById("stampsContainer");
+    const summary = document.getElementById("passportSummary");
+
+    stampsContainer.innerHTML = "";
+
+    if (reflections.length === 0) {
+      summary.textContent = "No stamps yet. Once you save reflections from different spaces, your passport will start to fill with color.";
+      return;
+    }
+
+    const galleryKeysUsed = new Set(reflections.map(r => r.galleryKey));
+
+    galleryKeysUsed.forEach(key => {
+      const info = galleryStamps[key];
+      if (!info) return;
+      const div = document.createElement("div");
+      div.className = "stamp";
+      const icon = document.createElement("span");
+      icon.textContent = info.icon;
+      const text = document.createElement("span");
+      text.textContent = info.text;
+      div.appendChild(icon);
+      div.appendChild(text);
+      stampsContainer.appendChild(div);
+    });
+
+    const reflectionCount = reflections.length;
+    const galleryCount = galleryKeysUsed.size;
+    summary.textContent = "You have written " + reflectionCount + " reflection" + (reflectionCount !== 1 ? "s" : "") +
+      " across " + galleryCount + " gallery area" + (galleryCount !== 1 ? "s" : "") + " in this prototype.";
+  }
+
+  // Initialize default view
+  updateJournalView();
+  updatePassport();
+</script>
+
+</body>
+</html>
